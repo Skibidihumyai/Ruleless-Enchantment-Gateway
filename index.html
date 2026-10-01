@@ -43,12 +43,8 @@
         }
 
         @keyframes gridScroll {
-            0% {
-                transform: translate(0, 0);
-            }
-            100% {
-                transform: translate(60px, 60px);
-            }
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
         }
 
         /* ===== GLOW ORB ===== */
@@ -624,11 +620,9 @@
             const LOADSTRING_RAW =
                 `loadstring(game:HttpGet("https://ruleless-enchantment.rblxscript.workers.dev/"))()`;
 
-            // ค่าคงที่สำหรับการติดตาม ไม่ต้องรอเวลาขั้นต่ำแล้ว
             const STORAGE_KEY = 're_followed_v2';
 
             let isVerified = false;
-            let isWaiting = false;
 
             // ============================================================
             //  ตรวจสอบว่าเคยติดตามแล้วหรือไม่ (ใช้ localStorage)
@@ -640,14 +634,13 @@
 
             function enableCopy() {
                 isVerified = true;
-                isWaiting = false;
                 copyBtn.classList.add('active');
-                lsBox.classList.add('verified'); // ซ่อน lock overlay
+                lsBox.classList.add('verified');
                 showFeedback('✅ ติดตามสำเร็จ! (กดคัดลอกได้)', 'success');
                 copyBtnText.textContent = 'คัดลอก Loadstring';
                 localStorage.setItem(STORAGE_KEY, 'true');
-                document.removeEventListener('visibilitychange', onVisibilityChange);
             }
+
             function showFeedback(msg, type) {
                 feedbackText.textContent = msg;
                 feedback.classList.remove('warning', 'error');
@@ -655,14 +648,8 @@
                     feedback.classList.add('warning');
                 } else if (type === 'error') {
                     feedback.classList.add('error');
-                } else {
-                    feedback.classList.remove('warning', 'error');
                 }
                 feedback.classList.add('show');
-            }
-
-            function hideFeedback() {
-                feedback.classList.remove('show');
             }
 
             function copyLoadstring() {
@@ -693,19 +680,7 @@
             }
 
             // ============================================================
-            //  FUNC: เมื่อ visibility เปลี่ยน (กลับมาที่หน้า)
-            // ============================================================
-            function onVisibilityChange() {
-                if (document.hidden) return;
-
-                if (isWaiting && !isVerified) {
-                    // ไม่ต้องรอเวลาขั้นต่ำอีกต่อไป ปลดล็อกทันทีเมื่อกลับมา
-                    enableCopy();
-                }
-            }
-
-            // ============================================================
-            //  FUNC: เริ่มกระบวนการติดตาม
+            //  FUNC: เริ่มกระบวนการติดตาม — ปลดล็อกทันทีเมื่อคลิก
             // ============================================================
             function startFollowProcess() {
                 if (isVerified) {
@@ -715,11 +690,8 @@
 
                 window.open('https://www.tiktok.com/@rulelessenchantment', '_blank');
 
-                isWaiting = true;
-                localStorage.removeItem(STORAGE_KEY);
-
-                showFeedback('⏳ กำลังรอการยืนยัน...', 'warning');
-                document.addEventListener('visibilitychange', onVisibilityChange);
+                // ปลดล็อกทันที ไม่ต้องรอ
+                enableCopy();
             }
 
             // ============================================================
